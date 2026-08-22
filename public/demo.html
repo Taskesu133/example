@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kafe Rimini — demo sajt sa AI asistentom</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; color: #222; }
+  header { background: #4f46e5; color: #fff; padding: 60px 20px; text-align: center; }
+  header h1 { margin: 0 0 8px; font-size: 32px; }
+  header p { margin: 0; opacity: .9; }
+  main { max-width: 720px; margin: 0 auto; padding: 40px 20px; line-height: 1.6; }
+  .badge { display: inline-block; background: #fef3c7; color: #92400e; padding: 10px 16px; border-radius: 8px; font-size: 14px; margin-bottom: 24px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 24px 0; }
+  .card { border: 1px solid #eee; border-radius: 12px; padding: 16px; }
+  .card h3 { margin-top: 0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>☕ Kafe Rimini</h1>
+  <p>domaća kuhinja i kafa u centru grada</p>
+</header>
+<main>
+  <div class="badge">👉 Ovo je DEMO sajt koji pokazuje AI chat asistenta u dnu desno. Klikni na 💬 i probaj ga.</div>
+
+  <h2>O nama</h2>
+  <p>Kafe Rimini je porodični kafić u centru grada koji već 10 godina servira doručke, ručkove i najbolju kafu u kraju. Ovaj sajt je primer kako izgleda kad mali biznis dobije AI asistenta koji 0-24 odgovara gostima na pitanja, pomaže oko rezervacija i nikad ne spava.</p>
+
+  <div class="grid">
+    <div class="card">
+      <h3>🍳 Doručak</h3>
+      <p>od 450 din, dostupan 08-12h</p>
+    </div>
+    <div class="card">
+      <h3>🍽️ Ručak</h3>
+      <p>od 690 din, dostupan 12-17h</p>
+    </div>
+  </div>
+
+  <h2>Zašto AI asistent?</h2>
+  <ul>
+    <li>Odgovara gostima odmah, i van radnog vremena osoblja</li>
+    <li>Zna radno vreme, cene, meni i FAQ napamet</li>
+    <li>Prosleđuje složenija pitanja na telefon/email</li>
+    <li>Podešava se za svaki biznis posebno za par minuta</li>
+  </ul>
+</main>
+
+<script src="/widget.js" data-business="demo" data-color="#4f46e5" data-greeting="Ćao! Ja sam AI asistent Kafe Rimini. Pitaj me bilo šta o meniju, radnom vremenu ili rezervaciji stola 🙂"></script>
+</body>
+</html>

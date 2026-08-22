@@ -1,0 +1,21 @@
+{
+  "name": "Kafe Rimini",
+  "tagline": "domaća kuhinja i kafa u centru grada",
+  "hours": "Pon-Pet 08-23h, Subota-Nedelja 09-24h",
+  "address": "Knez Mihailova 12, Beograd",
+  "contactPhone": "+381 60 123 4567",
+  "contactEmail": "info@kaferimini.rs",
+  "tone": "opušten, topao, malo duhovit",
+  "services": [
+    { "name": "Doručak meni", "price": "od 450 din", "description": "dostupan 08-12h" },
+    { "name": "Ručak meni", "price": "od 690 din", "description": "dostupan 12-17h" },
+    { "name": "Rezervacija stola", "description": "za grupe od 6+ osoba obavezna rezervacija" },
+    { "name": "Proslave i privatni events", "price": "po dogovoru", "description": "za rođendane, korporativne događaje" }
+  ],
+  "faq": [
+    { "q": "Da li imate vegan opcije?", "a": "Da, imamo poseban vegan meni sa 8 jela, pitaj konobara za trenutnu ponudu." },
+    { "q": "Da li primate kartice?", "a": "Da, sve kartice i mobilna plaćanja." },
+    { "q": "Da li imate parking?", "a": "Nemamo sopstveni parking, ali javni garaža je 200m niz ulicu." },
+    { "q": "Da li vodite kućne ljubimce?", "a": "Da, dobrodošli su na baštu, u unutrašnjem delu na povocu." }
+  ]
+}
