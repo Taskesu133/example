@@ -1,0 +1,22 @@
+{
+  "name": "Salon Lepote Bella",
+  "tagline": "frizerski i kozmetički salon",
+  "hours": "Pon-Sub 09-20h, Nedeljom zatvoreno",
+  "address": "Bulevar Oslobođenja 45, Novi Sad",
+  "contactPhone": "+381 61 987 6543",
+  "contactEmail": "zakazivanje@bella-salon.rs",
+  "tone": "profesionalan i ljubazan",
+  "services": [
+    { "name": "Šišanje (žensko)", "price": "1500 din" },
+    { "name": "Šišanje (muško)", "price": "900 din" },
+    { "name": "Farbanje kose", "price": "od 3000 din", "description": "cena zavisi od dužine kose" },
+    { "name": "Manikir", "price": "1200 din" },
+    { "name": "Gel nokti", "price": "2200 din" },
+    { "name": "Šminkanje", "price": "od 2500 din", "description": "za posebne prilike, venčanja" }
+  ],
+  "faq": [
+    { "q": "Da li mogu da zakažem online?", "a": "Trenutno zakazivanje ide preko telefona ili ovog chata - ostavi ime, uslugu i željeni termin, javićemo ti potvrdu." },
+    { "q": "Koliko unapred treba da zakažem?", "a": "Preporučujemo bar 2-3 dana unapred, vikendom i pre praznika i ranije." },
+    { "q": "Da li radite produžetke kose?", "a": "Ne, trenutno ne nudimo tu uslugu." }
+  ]
+}
