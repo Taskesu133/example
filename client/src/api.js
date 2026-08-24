@@ -66,4 +66,14 @@ export const api = {
   setBudget: (groupId, payload) => request(`/groups/${groupId}/budget`, { method: 'PUT', body: payload }),
 
   aiInsights: (groupId, month) => request(`/groups/${groupId}/ai/insights?month=${month}`),
+
+  listSavingsGoals: (groupId) => request(`/groups/${groupId}/savings`),
+  createSavingsGoal: (groupId, payload) =>
+    request(`/groups/${groupId}/savings`, { method: 'POST', body: payload }),
+  deleteSavingsGoal: (groupId, goalId) =>
+    request(`/groups/${groupId}/savings/${goalId}`, { method: 'DELETE' }),
+  addContribution: (groupId, goalId, payload) =>
+    request(`/groups/${groupId}/savings/${goalId}/contributions`, { method: 'POST', body: payload }),
+  deleteContribution: (groupId, goalId, contributionId) =>
+    request(`/groups/${groupId}/savings/${goalId}/contributions/${contributionId}`, { method: 'DELETE' }),
 };

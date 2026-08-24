@@ -312,3 +312,27 @@ label {
   white-space: pre-wrap;
   font-size: 0.8rem;
 }
+
+.savings-card {
+  margin-bottom: 1.5rem;
+}
+
+.savings-goal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.savings-goal {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.savings-goal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
