@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import Anthropic from '@anthropic-ai/sdk';
+import OpenAI from 'openai';
 import { db } from '../db.js';
 import { requireAuth } from '../middleware/auth.js';
 import { requireGroupMember } from '../middleware/membership.js';
@@ -9,16 +9,21 @@ router.use(requireAuth, requireGroupMember);
 
 let client = null;
 function getClient() {
-  if (!process.env.ANTHROPIC_API_KEY) return null;
-  if (!client) client = new Anthropic();
+  if (!process.env.DEEPSEEK_API_KEY) return null;
+  if (!client) {
+    client = new OpenAI({
+      apiKey: process.env.DEEPSEEK_API_KEY,
+      baseURL: 'https://api.deepseek.com',
+    });
+  }
   return client;
 }
 
 router.get('/insights', async (req, res) => {
-  const anthropic = getClient();
-  if (!anthropic) {
+  const deepseek = getClient();
+  if (!deepseek) {
     return res.status(503).json({
-      error: 'AI funkcija nije podesena. Postavite ANTHROPIC_API_KEY u server/.env da biste je omogucili.',
+      error: 'AI funkcija nije podesena. Postavite DEEPSEEK_API_KEY u server/.env da biste je omogucili.',
     });
   }
 
@@ -54,22 +59,23 @@ router.get('/insights', async (req, res) => {
   ].join('\n');
 
   try {
-    const message = await anthropic.messages.create({
-      model: 'claude-opus-5',
+    const completion = await deepseek.chat.completions.create({
+      model: 'deepseek-chat',
       max_tokens: 700,
-      system:
-        'Ti si finansijski asistent u aplikaciji za licno budzetiranje. Na osnovu podataka o potrosnji, ' +
-        'daj kratku, konkretnu analizu i 2-4 praktична saveta za stednju, na srpskom jeziku. ' +
-        'Budi konkretan i koristi brojeve iz podataka. Format: kratak pasus analize, zatim lista saveta sa crticama. ' +
-        'Nemoj izmisljati podatke koji nisu dati.',
-      messages: [{ role: 'user', content: `Evo podataka o mojoj potrosnji:\n\n${dataSummary}` }],
+      messages: [
+        {
+          role: 'system',
+          content:
+            'Ti si finansijski asistent u aplikaciji za licno budzetiranje. Na osnovu podataka o potrosnji, ' +
+            'daj kratku, konkretnu analizu i 2-4 prakticna saveta za stednju, na srpskom jeziku. ' +
+            'Budi konkretan i koristi brojeve iz podataka. Format: kratak pasus analize, zatim lista saveta sa crticama. ' +
+            'Nemoj izmisljati podatke koji nisu dati.',
+        },
+        { role: 'user', content: `Evo podataka o mojoj potrosnji:\n\n${dataSummary}` },
+      ],
     });
 
-    const text = message.content
-      .filter((block) => block.type === 'text')
-      .map((block) => block.text)
-      .join('\n');
-
+    const text = completion.choices[0]?.message?.content || '';
     res.json({ insights: text || 'Nisam uspeo da generisem savete, pokusajte ponovo.' });
   } catch (err) {
     console.error('AI insights error:', err);

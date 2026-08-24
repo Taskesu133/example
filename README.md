@@ -11,7 +11,7 @@ uštedu na osnovu tvoje potrošnje.
 - Dodavanje/brisanje troškova sa kategorijom, datumom i napomenom
 - Prikaz troškova po kategorijama (grafikon) i po članu grupe
 - Mesečni budžet sa progres-barom (koliko je potrošeno / preostalo)
-- AI saveti za uštedu (Claude API) na osnovu potrošnje za izabrani mesec
+- AI saveti za uštedu (DeepSeek API) na osnovu potrošnje za izabrani mesec
 
 ## Struktura projekta
 
@@ -53,10 +53,11 @@ unosiš troškove.
 
 ### 3. (Opciono) AI saveti za uštedu
 
-Da bi radila AI kartica na dashboardu, potreban je Anthropic API ključ:
+Da bi radila AI kartica na dashboardu, potreban je DeepSeek API ključ
+(https://platform.deepseek.com):
 
 1. Otvori `server/.env`
-2. Postavi `ANTHROPIC_API_KEY=tvoj-kljuc`
+2. Postavi `DEEPSEEK_API_KEY=tvoj-kljuc`
 3. Restartuj backend
 
 Bez ključa, ostatak aplikacije radi normalno — AI kartica samo prikazuje
@@ -71,5 +72,5 @@ iste troškove, kategorije i budžet, i mogu da unose sopstvene troškove.
 
 ## Tehnologije
 
-- **Backend**: Express, better-sqlite3, bcryptjs, jsonwebtoken, @anthropic-ai/sdk
+- **Backend**: Express, better-sqlite3, bcryptjs, jsonwebtoken, openai SDK (DeepSeek API)
 - **Frontend**: React 19, React Router, Recharts, Vite
