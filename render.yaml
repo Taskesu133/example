@@ -3,7 +3,7 @@ services:
     name: budgetai
     runtime: node
     plan: free
-    buildCommand: "npm install --prefix client && npm run build --prefix client && npm install --prefix server"
+    buildCommand: "npm install --include=dev --prefix client && npm run build --prefix client && npm install --prefix server"
     startCommand: "node server/src/index.js"
     envVars:
       - key: JWT_SECRET
@@ -14,5 +14,3 @@ services:
         sync: false
       - key: TURSO_AUTH_TOKEN
         sync: false
-      - key: NODE_ENV
-        value: production
