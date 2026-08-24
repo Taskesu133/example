@@ -9,6 +9,25 @@ function currentMonth() {
   return new Date().toISOString().slice(0, 7);
 }
 
+const CATEGORY_COLORS = [
+  '#f97316', // narandzasta
+  '#6366f1', // indigo
+  '#0ea5e9', // plava
+  '#ec4899', // roze
+  '#10b981', // zelena
+  '#eab308', // zuta
+  '#64748b', // siva
+  '#8b5cf6', // ljubicasta
+  '#14b8a6', // tirkizna
+  '#ef4444', // crvena
+  '#f59e0b', // cilibar
+  '#06b6d4', // cijan
+];
+
+function randomCategoryColor() {
+  return CATEGORY_COLORS[Math.floor(Math.random() * CATEGORY_COLORS.length)];
+}
+
 export default function GroupDashboard() {
   const { groupId } = useParams();
   const { user } = useAuth();
@@ -138,7 +157,7 @@ export default function GroupDashboard() {
     if (!newCategory.trim()) return;
     setError('');
     try {
-      await api.createCategory(groupId, { name: newCategory.trim() });
+      await api.createCategory(groupId, { name: newCategory.trim(), color: randomCategoryColor() });
       setNewCategory('');
       await loadAll();
     } catch (err) {
