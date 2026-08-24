@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { api } from '../api';
 import { useAuth } from '../AuthContext';
+import SavingsSection from '../components/SavingsSection';
 
 function currentMonth() {
   return new Date().toISOString().slice(0, 7);
@@ -311,6 +312,8 @@ export default function GroupDashboard() {
               )}
             </div>
           </div>
+
+          <SavingsSection groupId={groupId} />
 
           <div className="card">
             <h2>Troskovi</h2>

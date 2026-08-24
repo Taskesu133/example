@@ -11,6 +11,7 @@ import categoryRoutes from './routes/categories.js';
 import expenseRoutes from './routes/expenses.js';
 import budgetRoutes from './routes/budgets.js';
 import aiRoutes from './routes/ai.js';
+import savingsRoutes from './routes/savings.js';
 import { maybeTriggerGmailImport } from './automation/gmailImport.js';
 
 const app = express();
@@ -35,6 +36,7 @@ app.use('/api/groups/:groupId/categories', categoryRoutes);
 app.use('/api/groups/:groupId/expenses', expenseRoutes);
 app.use('/api/groups/:groupId/budget', budgetRoutes);
 app.use('/api/groups/:groupId/ai', aiRoutes);
+app.use('/api/groups/:groupId/savings', savingsRoutes);
 
 // U produkciji, backend servira i vec izgradjen React frontend (client/dist),
 // tako da cela aplikacija radi kao jedan Render web servis.

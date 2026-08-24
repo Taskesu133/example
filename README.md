@@ -13,6 +13,7 @@ uštedu na osnovu tvoje potrošnje.
 - Mesečni budžet sa progres-barom (koliko je potrošeno / preostalo)
 - AI saveti za uštedu (DeepSeek API) na osnovu potrošnje za izabrani mesec
 - Automatski uvoz troškova i uplata iz bankovnih mejlova (Yettel Bank preko Gmail-a)
+- Ciljevi za štednju po grupi (npr. "Odmor") sa praćenjem uplata i progres-barom
 
 ## Struktura projekta
 
