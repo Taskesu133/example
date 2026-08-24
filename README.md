@@ -122,6 +122,11 @@ radi 24/7 nezavisno, direktno unutar Render servisa.
 Mejlovi o rati kredita, tarifniku i sl. se preskaču (nemaju iznos ili nisu
 relevantni).
 
+Troškovi u EUR se automatski pretvaraju u RSD po fiksnom kursu (podrazumevano
+117.5, podesivo preko `EUR_TO_RSD_RATE`), tako da se svi troškovi ispravno
+sabiraju u istoj valuti. Napomena troška ostaje sa originalnim EUR iznosom
+radi transparentnosti (npr. "APPLE.COM/BILL CORK (2.99 EUR)").
+
 ### Korak 1 — napravi Gmail App Password
 
 1. Na Gmail nalogu mora biti uključena dvofaktorska autentifikacija (2-Step

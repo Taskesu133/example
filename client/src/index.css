@@ -274,6 +274,28 @@ label {
   border-bottom: 1px solid var(--border);
 }
 
+.cell-select,
+.cell-input {
+  padding: 0.3rem 0.4rem;
+  font-size: 0.85rem;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  width: auto;
+}
+
+.cell-input {
+  width: 6.5rem;
+}
+
+.cell-select:hover,
+.cell-input:hover,
+.cell-select:focus,
+.cell-input:focus {
+  border-color: var(--border);
+  background: var(--surface);
+}
+
 .tag {
   color: white;
   padding: 0.15rem 0.5rem;

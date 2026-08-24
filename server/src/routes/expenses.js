@@ -84,6 +84,61 @@ router.post(
   })
 );
 
+router.patch(
+  '/:expenseId',
+  asyncHandler(async (req, res) => {
+    const expenseId = Number(req.params.expenseId);
+    const expense = await dbGet('SELECT * FROM expenses WHERE id = ? AND group_id = ?', [
+      expenseId,
+      req.groupId,
+    ]);
+    if (!expense) return res.status(404).json({ error: 'Trosak nije pronadjen.' });
+    if (expense.user_id !== req.userId && req.groupRole !== 'owner') {
+      return res.status(403).json({ error: 'Mozete izmeniti samo svoje troskove.' });
+    }
+
+    const { amount, categoryId } = req.body || {};
+    const updates = [];
+    const args = [];
+
+    if (amount !== undefined) {
+      const numAmount = Number(amount);
+      if (!Number.isFinite(numAmount) || numAmount <= 0) {
+        return res.status(400).json({ error: 'Iznos mora biti pozitivan broj.' });
+      }
+      updates.push('amount = ?');
+      args.push(numAmount);
+    }
+
+    if (categoryId !== undefined) {
+      let catId = null;
+      if (categoryId) {
+        const category = await dbGet('SELECT id FROM categories WHERE id = ? AND group_id = ?', [
+          Number(categoryId),
+          req.groupId,
+        ]);
+        if (!category) return res.status(400).json({ error: 'Kategorija ne pripada ovoj grupi.' });
+        catId = category.id;
+      }
+      updates.push('category_id = ?');
+      args.push(catId);
+    }
+
+    if (updates.length === 0) return res.status(400).json({ error: 'Nema izmena za sacuvati.' });
+
+    args.push(expenseId);
+    await dbRun(`UPDATE expenses SET ${updates.join(', ')} WHERE id = ?`, args);
+
+    const updated = await dbGet(
+      `SELECT e.id, e.amount, e.note, e.spent_on, e.category_id, c.name AS category_name, c.color AS category_color
+       FROM expenses e LEFT JOIN categories c ON c.id = e.category_id
+       WHERE e.id = ?`,
+      [expenseId]
+    );
+    res.json({ expense: updated });
+  })
+);
+
 router.delete(
   '/:expenseId',
   asyncHandler(async (req, res) => {

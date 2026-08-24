@@ -6,6 +6,10 @@ import { parseYettelEmail } from './parseYettelEmail.js';
 const SENDER = process.env.BANK_SENDER_EMAIL || 'yettelbank@yettelbank.rs';
 const INITIAL_LOOKBACK_DAYS = 30;
 const MIN_POLL_INTERVAL_MS = 15 * 60 * 1000; // ne cesce od jednom u 15 min
+// Fiksan priblizan kurs (dinar je vezan za evro i dugo drzi ~117-118) - koristi
+// se da bi se EUR troskovi sabirali zajedno sa RSD u istoj valuti umesto da
+// izobliceni broj uleti u ukupan zbir. Podesivo preko env promenljive.
+const EUR_TO_RSD_RATE = Number(process.env.EUR_TO_RSD_RATE) || 117.5;
 
 let running = false;
 
@@ -14,9 +18,16 @@ function isConfigured() {
 }
 
 async function applyExpense(groupId, userId, parsed) {
+  let amount = parsed.amount;
+  let note = parsed.note;
+  if (parsed.currency === 'EUR') {
+    const originalAmount = parsed.amount;
+    amount = Math.round(parsed.amount * EUR_TO_RSD_RATE * 100) / 100;
+    note = `${parsed.note} (${originalAmount.toFixed(2)} EUR)`;
+  }
   await dbRun(
     'INSERT INTO expenses (group_id, user_id, category_id, amount, note, spent_on) VALUES (?, ?, NULL, ?, ?, ?)',
-    [groupId, userId, parsed.amount, parsed.note, parsed.spentOn]
+    [groupId, userId, amount, note, parsed.spentOn]
   );
 }
 

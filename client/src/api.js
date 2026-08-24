@@ -58,6 +58,8 @@ export const api = {
   },
   createExpense: (groupId, payload) =>
     request(`/groups/${groupId}/expenses`, { method: 'POST', body: payload }),
+  updateExpense: (groupId, expenseId, payload) =>
+    request(`/groups/${groupId}/expenses/${expenseId}`, { method: 'PATCH', body: payload }),
   deleteExpense: (groupId, expenseId) =>
     request(`/groups/${groupId}/expenses/${expenseId}`, { method: 'DELETE' }),
   summary: (groupId, month) => request(`/groups/${groupId}/expenses/summary?month=${month}`),
