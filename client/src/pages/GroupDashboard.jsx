@@ -112,6 +112,16 @@ export default function GroupDashboard() {
     }
   }
 
+  async function handleUpdateExpense(id, payload) {
+    setError('');
+    try {
+      await api.updateExpense(groupId, id, payload);
+      await loadAll();
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
   async function handleSetBudget(e) {
     e.preventDefault();
     setError('');
@@ -332,28 +342,69 @@ export default function GroupDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {expenses.map((exp) => (
-                    <tr key={exp.id}>
-                      <td>{exp.spent_on}</td>
-                      <td>
-                        {exp.category_name && (
-                          <span className="tag" style={{ backgroundColor: exp.category_color }}>
-                            {exp.category_name}
-                          </span>
-                        )}
-                      </td>
-                      <td>{exp.user_name}</td>
-                      <td>{exp.note}</td>
-                      <td>{exp.amount.toFixed(2)}</td>
-                      <td>
-                        {exp.user_id === user.id && (
-                          <button className="ghost small" onClick={() => handleDeleteExpense(exp.id)}>
-                            Obrisi
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
+                  {expenses.map((exp) => {
+                    const canEdit = exp.user_id === user.id;
+                    return (
+                      <tr key={exp.id}>
+                        <td>{exp.spent_on}</td>
+                        <td>
+                          {canEdit ? (
+                            <select
+                              className="cell-select"
+                              value={exp.category_id || ''}
+                              onChange={(e) =>
+                                handleUpdateExpense(exp.id, { categoryId: e.target.value || null })
+                              }
+                            >
+                              <option value="">Bez kategorije</option>
+                              {categories.map((c) => (
+                                <option key={c.id} value={c.id}>
+                                  {c.name}
+                                </option>
+                              ))}
+                            </select>
+                          ) : (
+                            exp.category_name && (
+                              <span className="tag" style={{ backgroundColor: exp.category_color }}>
+                                {exp.category_name}
+                              </span>
+                            )
+                          )}
+                        </td>
+                        <td>{exp.user_name}</td>
+                        <td>{exp.note}</td>
+                        <td>
+                          {canEdit ? (
+                            <input
+                              key={`${exp.id}-${exp.amount}`}
+                              className="cell-input"
+                              type="number"
+                              min="0.01"
+                              step="0.01"
+                              defaultValue={exp.amount}
+                              onBlur={(e) => {
+                                const value = Number(e.target.value);
+                                if (Number.isFinite(value) && value > 0 && value !== exp.amount) {
+                                  handleUpdateExpense(exp.id, { amount: value });
+                                } else {
+                                  e.target.value = exp.amount;
+                                }
+                              }}
+                            />
+                          ) : (
+                            exp.amount.toFixed(2)
+                          )}
+                        </td>
+                        <td>
+                          {canEdit && (
+                            <button className="ghost small" onClick={() => handleDeleteExpense(exp.id)}>
+                              Obrisi
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             )}

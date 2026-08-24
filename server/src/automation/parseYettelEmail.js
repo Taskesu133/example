@@ -29,8 +29,9 @@ export function parseYettelEmail({ subject, text, date }) {
     return {
       type: 'expense',
       amount: parseAmount(amountStr),
+      currency,
       spentOn: toIsoDate(dd, mm, yyyy),
-      note: currency === 'EUR' ? `${merchant.trim()} [EUR]` : merchant.trim(),
+      note: merchant.trim(),
     };
   }
 
@@ -40,6 +41,7 @@ export function parseYettelEmail({ subject, text, date }) {
     return {
       type: 'expense',
       amount: parseAmount(m[1]),
+      currency: 'RSD',
       spentOn: toIsoDateFromHeader(date),
       note: 'Zaduzenje po tekucem racunu',
     };
@@ -51,6 +53,7 @@ export function parseYettelEmail({ subject, text, date }) {
     return {
       type: 'income',
       amount: parseAmount(m[1]),
+      currency: 'RSD',
       month: toIsoDateFromHeader(date).slice(0, 7),
     };
   }
