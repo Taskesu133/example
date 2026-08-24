@@ -11,12 +11,16 @@ import categoryRoutes from './routes/categories.js';
 import expenseRoutes from './routes/expenses.js';
 import budgetRoutes from './routes/budgets.js';
 import aiRoutes from './routes/ai.js';
+import { maybeTriggerGmailImport } from './automation/gmailImport.js';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get('/api/health', (req, res) => res.json({ ok: true }));
+app.get('/api/health', (req, res) => {
+  res.json({ ok: true });
+  maybeTriggerGmailImport();
+});
 
 app.use('/api/auth', authRoutes);
 app.use('/api/groups', groupRoutes);

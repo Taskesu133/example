@@ -12,6 +12,7 @@ uštedu na osnovu tvoje potrošnje.
 - Prikaz troškova po kategorijama (grafikon) i po članu grupe
 - Mesečni budžet sa progres-barom (koliko je potrošeno / preostalo)
 - AI saveti za uštedu (DeepSeek API) na osnovu potrošnje za izabrani mesec
+- Automatski uvoz troškova i uplata iz bankovnih mejlova (Yettel Bank preko Gmail-a)
 
 ## Struktura projekta
 
@@ -106,6 +107,53 @@ Besplatan Render plan uspava servis posle ~15 min neaktivnosti — prvi
 sledeći zahtev čeka desetak sekundi dok se probudi. To je normalno i ne
 utiče na podatke (koji sada žive u Turso, ne na samom servisu).
 
+## Automatski uvoz troškova iz bankovnih mejlova (Yettel Bank)
+
+Server sam čita Gmail (preko IMAP-a) i automatski dodaje troškove/uplate na
+osnovu mejlova od `yettelbank@yettelbank.rs`, bez ikakve Claude/AI sesije —
+radi 24/7 nezavisno, direktno unutar Render servisa.
+
+**Prepoznaje tri tipa mejlova:**
+- "Transakcija je izvršena" (kupovina karticom) → trošak
+- "Zaduženje po tekućem računu" (direktno zaduženje) → trošak
+- "Uplata na tekući račun" (uplata/plata) → dodaje se na budžet za taj mesec
+
+Mejlovi o rati kredita, tarifniku i sl. se preskaču (nemaju iznos ili nisu
+relevantni).
+
+### Korak 1 — napravi Gmail App Password
+
+1. Na Gmail nalogu mora biti uključena dvofaktorska autentifikacija (2-Step
+   Verification) — Google nalog → Bezbednost
+2. Idi na https://myaccount.google.com/apppasswords
+3. Napravi novu lozinku za aplikaciju (naziv npr. "BudgetAI"), kopiraj
+   16-karakterni kod
+
+### Korak 2 — podesi environment promenljive na Render-u
+
+Servis → **Environment** → dodaj:
+- `GMAIL_USER` — tvoja Gmail adresa
+- `GMAIL_APP_PASSWORD` — kod iz koraka 1 (bez razmaka)
+- `AUTOMATION_GROUP_NAME` — tačan naziv grupe u aplikaciji u koju idu ovi
+  troškovi (mora se poklapati sa nazivom grupe, veličina slova nije bitna)
+
+Sačuvaj — pri prvom pokretanju automatski se uvozi poslednjih 30 dana
+istorije, a zatim samo nove mejlove.
+
+### Korak 3 — drži servis "budnim" da bi automatizacija stvarno radila
+
+Provera mejlova se pokreće kad neko/nešto pozove `/api/health` (najviše
+jednom u 15 minuta). Da bi to bilo redovno bez tvog ručnog otvaranja
+aplikacije, podesi besplatan spoljni servis da periodično "pinguje" tu
+adresu — npr. [UptimeRobot](https://uptimerobot.com) (besplatno, do svakih
+5 minuta):
+
+1. Napravi nalog na uptimerobot.com
+2. **Add New Monitor** → HTTP(s) → URL: `https://tvoj-servis.onrender.com/api/health`
+3. Interval: 5 minuta → Save
+
+Ovo istovremeno drži besplatan Render servis budnim i okida proveru mejlova.
+
 ## Deljenje budžeta sa drugima
 
 Svaki korisnik ima svoj nalog. Kada napravi grupu, dobija jedinstveni kod za
@@ -115,5 +163,5 @@ iste troškove, kategorije i budžet, i mogu da unose sopstvene troškove.
 
 ## Tehnologije
 
-- **Backend**: Express, @libsql/client (SQLite/Turso), bcryptjs, jsonwebtoken, openai SDK (DeepSeek API)
+- **Backend**: Express, @libsql/client (SQLite/Turso), bcryptjs, jsonwebtoken, openai SDK (DeepSeek API), imapflow + mailparser (Gmail uvoz)
 - **Frontend**: React 19, React Router, Recharts, Vite
