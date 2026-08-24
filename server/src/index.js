@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import express from 'express';
 import cors from 'cors';
+import { initDb } from './db.js';
 import authRoutes from './routes/auth.js';
 import groupRoutes from './routes/groups.js';
 import categoryRoutes from './routes/categories.js';
@@ -42,6 +43,13 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
-  console.log(`Budget API server running on http://localhost:${PORT}`);
-});
+initDb()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Budget API server running on http://localhost:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('Neuspesno pokretanje baze:', err);
+    process.exit(1);
+  });

@@ -16,7 +16,7 @@ uštedu na osnovu tvoje potrošnje.
 ## Struktura projekta
 
 ```
-server/   Node.js + Express + SQLite backend (REST API)
+server/   Node.js + Express + SQLite/Turso (libSQL) backend (REST API)
 client/   React (Vite) frontend
 ```
 
@@ -31,8 +31,10 @@ cp .env.example .env    # po potrebi izmeni JWT_SECRET
 npm run dev              # http://localhost:4000
 ```
 
-Baza podataka je SQLite fajl (`server/data.sqlite`) koji se automatski
-kreira pri prvom pokretanju — nije potreban poseban DB server.
+Za razvoj na svom računaru nije potreban poseban DB server — baza je
+lokalni SQLite fajl (`server/data.sqlite`) koji se automatski kreira pri
+prvom pokretanju. Za deploy (npr. na Render) preporučuje se besplatna
+Turso cloud baza — vidi sekciju "Deploy na Render" niže.
 
 ### 2. Frontend
 
@@ -63,44 +65,46 @@ Da bi radila AI kartica na dashboardu, potreban je DeepSeek API ključ
 Bez ključa, ostatak aplikacije radi normalno — AI kartica samo prikazuje
 poruku da funkcija nije podešena.
 
-## Deploy na Render
+## Deploy na Render (potpuno besplatno)
 
-Aplikacija je podešena da radi kao **jedan** Render Web Service — backend
-servira i izgrađen React frontend, tako da nema CORS komplikacija i ne
-treba ti dodatni servis.
+Aplikacija je podešena da radi kao **jedan** besplatan Render Web Service
+— backend servira i izgrađen React frontend (nema CORS komplikacija, ne
+treba ti dodatni servis). Za trajne podatke (bez gubljenja naloga/troškova
+kad servis "zaspi" i probudi se) koristi se **Turso** — besplatna,
+SQLite-kompatibilna cloud baza koja ne ističe i ne traži karticu.
 
-### Opcija A — preko Blueprint-a (najlakše)
+### Korak 1 — napravi besplatnu Turso bazu
+
+1. Idi na https://turso.tech i napravi nalog (besplatno, bez kartice)
+2. Instaliraj Turso CLI i uloguj se, ili koristi njihov web dashboard
+3. Napravi bazu, npr:
+   ```bash
+   turso db create budgetai
+   turso db show budgetai --url          # ovo je TURSO_DATABASE_URL
+   turso db tokens create budgetai       # ovo je TURSO_AUTH_TOKEN
+   ```
+   (Isto možeš i preko dashboard-a na turso.tech, bez CLI-ja.)
+
+### Korak 2 — deploy na Render preko Blueprint-a
 
 1. Na Render dashboard-u: **New → Blueprint**
 2. Poveži ovaj GitHub repo — Render će pronaći `render.yaml` u root folderu
-   i sam podesiti build/start komande, promenljive okruženja i disk
-3. Kada te pita, unesi svoj `DEEPSEEK_API_KEY` (ostalo se popunjava samo)
+   i sam podesiti besplatan plan, build/start komande i promenljive
+3. Kad zatraži, unesi:
+   - `DEEPSEEK_API_KEY` — tvoj DeepSeek ključ (opciono, za AI savete)
+   - `TURSO_DATABASE_URL` i `TURSO_AUTH_TOKEN` iz koraka 1
 4. Klikni Deploy
 
-### Opcija B — ručno kreiranje servisa
+Bez Turso promenljivih, aplikacija i dalje radi (koristi lokalni SQLite
+fajl kao fallback), ali na besplatnom Render planu bi se podaci gubili
+kad servis zaspi zbog neaktivnosti i onda se ponovo probudi. Sa Turso
+podešenim, podaci trajno ostaju — potpuno besplatno.
 
-1. **New → Web Service**, poveži repo
-2. **Build Command**:
-   `npm install --prefix client && npm run build --prefix client && npm install --prefix server`
-3. **Start Command**: `node server/src/index.js`
-4. **Environment Variables**:
-   - `JWT_SECRET` — bilo koji dugačak nasumičan tekst
-   - `DEEPSEEK_API_KEY` — tvoj DeepSeek ključ (opciono, za AI savete)
-   - `DB_PATH` — `/var/data/data.sqlite` (samo ako dodaješ disk, videti niže)
+### Napomena o "buđenju" servisa
 
-### Trajnost podataka (SQLite)
-
-Baza je običan fajl na disku. Render-ov **besplatni** plan ima efemeran
-fajl-sistem — podaci (nalozi, troškovi) bi se izgubili pri svakom
-redeploy-u ili restartu servisa. Za trajne podatke:
-
-- Dodaj **Persistent Disk** servisu (Render → tvoj servis → Disks → Add
-  Disk), mount path npr. `/var/data`, veličina 1GB je dovoljna za start
-  — ovo zahteva plaćeni plan (najjeftiniji "Starter")
-- Postavi `DB_PATH=/var/data/data.sqlite` da baza piše na taj disk
-
-Ako ti je ovo samo za probu/demo, možeš i bez diska — samo znaj da će se
-podaci povremeno resetovati.
+Besplatan Render plan uspava servis posle ~15 min neaktivnosti — prvi
+sledeći zahtev čeka desetak sekundi dok se probudi. To je normalno i ne
+utiče na podatke (koji sada žive u Turso, ne na samom servisu).
 
 ## Deljenje budžeta sa drugima
 
@@ -111,5 +115,5 @@ iste troškove, kategorije i budžet, i mogu da unose sopstvene troškove.
 
 ## Tehnologije
 
-- **Backend**: Express, better-sqlite3, bcryptjs, jsonwebtoken, openai SDK (DeepSeek API)
+- **Backend**: Express, @libsql/client (SQLite/Turso), bcryptjs, jsonwebtoken, openai SDK (DeepSeek API)
 - **Frontend**: React 19, React Router, Recharts, Vite
