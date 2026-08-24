@@ -37,6 +37,7 @@ export const api = {
   register: (payload) => request('/auth/register', { method: 'POST', body: payload, auth: false }),
   login: (payload) => request('/auth/login', { method: 'POST', body: payload, auth: false }),
   me: () => request('/auth/me'),
+  automationToken: () => request('/auth/automation-token', { method: 'POST' }),
 
   listGroups: () => request('/groups'),
   createGroup: (name) => request('/groups', { method: 'POST', body: { name } }),

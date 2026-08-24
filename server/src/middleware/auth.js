@@ -18,3 +18,9 @@ export function requireAuth(req, res, next) {
 export function signToken(userId) {
   return jwt.sign({ userId }, JWT_SECRET, { expiresIn: '30d' });
 }
+
+// Dugotrajan token namenjen automatizaciji (npr. skripta koja cita mejlove i
+// dodaje troskove preko API-ja), a ne za prijavu u browseru.
+export function signAutomationToken(userId) {
+  return jwt.sign({ userId, automation: true }, JWT_SECRET, { expiresIn: '3650d' });
+}
