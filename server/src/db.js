@@ -89,6 +89,10 @@ export async function initDb() {
       amount REAL NOT NULL,
       PRIMARY KEY (group_id, month)
     )`,
+    `CREATE TABLE IF NOT EXISTS automation_state (
+      key TEXT PRIMARY KEY,
+      value TEXT
+    )`,
   ];
 
   for (const sql of statements) {
@@ -155,4 +159,17 @@ export async function seedDefaultCategoriesTx(run, groupId) {
       color,
     ]);
   }
+}
+
+export async function getAutomationState(key) {
+  const row = await dbGet('SELECT value FROM automation_state WHERE key = ?', [key]);
+  return row ? row.value : null;
+}
+
+export async function setAutomationState(key, value) {
+  await dbRun(
+    `INSERT INTO automation_state (key, value) VALUES (?, ?)
+     ON CONFLICT(key) DO UPDATE SET value = excluded.value`,
+    [key, value]
+  );
 }
