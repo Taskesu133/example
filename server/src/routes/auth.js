@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import { dbGet, dbRun } from '../db.js';
-import { signToken, requireAuth } from '../middleware/auth.js';
+import { signToken, signAutomationToken, requireAuth } from '../middleware/auth.js';
 import { asyncHandler } from '../middleware/asyncHandler.js';
 
 const router = Router();
@@ -60,6 +60,15 @@ router.get(
     const user = await dbGet('SELECT id, name, email FROM users WHERE id = ?', [req.userId]);
     if (!user) return res.status(404).json({ error: 'Korisnik nije pronadjen.' });
     res.json({ user });
+  })
+);
+
+router.post(
+  '/automation-token',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const token = signAutomationToken(req.userId);
+    res.json({ token });
   })
 );
 

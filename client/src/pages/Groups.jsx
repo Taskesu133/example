@@ -13,6 +13,10 @@ export default function Groups() {
   const [inviteCode, setInviteCode] = useState('');
   const [busy, setBusy] = useState(false);
 
+  const [automationToken, setAutomationToken] = useState('');
+  const [automationBusy, setAutomationBusy] = useState(false);
+  const [automationError, setAutomationError] = useState('');
+
   function loadGroups() {
     setLoading(true);
     api
@@ -55,6 +59,19 @@ export default function Groups() {
       setError(err.message);
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function handleGenerateAutomationToken() {
+    setAutomationBusy(true);
+    setAutomationError('');
+    try {
+      const { token } = await api.automationToken();
+      setAutomationToken(token);
+    } catch (err) {
+      setAutomationError(err.message);
+    } finally {
+      setAutomationBusy(false);
     }
   }
 
@@ -126,6 +143,24 @@ export default function Groups() {
           ))}
         </ul>
       )}
+
+      <h2>Automatizacija</h2>
+      <div className="card">
+        <p className="muted">
+          Token za spoljne automatizacije (npr. skriptu koja cita bankovne mejlove i sama dodaje
+          troskove preko API-ja). Cuvaj ga kao lozinku — svako ko ga ima moze da dodaje/brise troskove
+          u tvoje ime.
+        </p>
+        <button onClick={handleGenerateAutomationToken} disabled={automationBusy}>
+          {automationBusy ? 'Generisanje...' : 'Generisi automation token'}
+        </button>
+        {automationError && <p className="error">{automationError}</p>}
+        {automationToken && (
+          <div className="token-box">
+            <code>{automationToken}</code>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
