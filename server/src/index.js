@@ -17,10 +17,17 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get('/api/health', (req, res) => {
-  res.json({ ok: true });
+// Svaki zahtev (ne samo /api/health) sluzi kao okidac za proveru novih
+// bankovnih mejlova - ne oslanjamo se samo na spoljni "keep alive" ping,
+// jer normalno koriscenje app-a (login, ucitavanje grupa...) vec generise
+// dovoljno saobracaja. Ograniceno je na najvise jednom u 15 min unutar
+// maybeTriggerGmailImport, pa ovo ne usporava zahteve.
+app.use((req, res, next) => {
   maybeTriggerGmailImport();
+  next();
 });
+
+app.get('/api/health', (req, res) => res.json({ ok: true }));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/groups', groupRoutes);
